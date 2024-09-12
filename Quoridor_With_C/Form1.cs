@@ -22,7 +22,7 @@ namespace Quoridor_With_C
         [DllImport("kernel32.dll")]
         public static extern Boolean FreeConsole(); 
 
-        Graphics Gr;
+        public static Graphics Gr;
         Graphics Gr_Chess1;
 
         Bitmap bmp = new Bitmap(1000, 900);
@@ -253,9 +253,9 @@ namespace Quoridor_With_C
 
                 TestTB.Text = "当前行动玩家：白子";
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "白子剩余挡板：" + NowQuoridor.NumPlayer1Board.ToString();
+                TestTB.Text += "白子剩余挡板：" + QuoridorRuleEngine.NumPlayer1Board.ToString();
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "黑子剩余挡板：" + NowQuoridor.NumPlayer2Board.ToString(); 
+                TestTB.Text += "黑子剩余挡板：" + QuoridorRuleEngine.NumPlayer2Board.ToString(); 
             }
             else
             {
@@ -337,6 +337,7 @@ namespace Quoridor_With_C
         {
 
         }
+        long count_AIAction = 0;
         /// <summary>
         /// 根据点击坐标执行下棋操作
         /// </summary>
@@ -366,6 +367,7 @@ namespace Quoridor_With_C
 
             # endregion
 
+            #region 玩家落子
             if (!(row >= 0 && row <= 6 && col >= 0 && col <= 6))
             {
                 Hint = "点击越界！";
@@ -373,8 +375,8 @@ namespace Quoridor_With_C
             }
             string Hint1 = "";
             string Hint2 = "";
-            Hint1 = NowQuoridor.CheckBoard(PlayerNowAction, EnumNowPlayer.Player1, row, col);
-            Hint2 = NowQuoridor.CheckBoard(PlayerNowAction, EnumNowPlayer.Player2, row, col);
+            Hint1 = NowQuoridor.QuoridorRule.CheckBoard(NowQuoridor.ThisChessBoard, PlayerNowAction, EnumNowPlayer.Player1, row, col);
+            Hint2 = NowQuoridor.QuoridorRule.CheckBoard(NowQuoridor.ThisChessBoard, PlayerNowAction, EnumNowPlayer.Player2, row, col);
 
 
             if (Hint1 == "Player1 No Board")
@@ -408,7 +410,7 @@ namespace Quoridor_With_C
                 return Hint1 + Hint2;
             }
 
-            Hint = NowQuoridor.ThisChessBoard.Action(row, col, PlayerNowAction);
+            Hint = NowQuoridor.QuoridorRule.Action(ref NowQuoridor.ThisChessBoard,row, col, PlayerNowAction);
 
             if (Hint != "OK")
             {
@@ -419,21 +421,21 @@ namespace Quoridor_With_C
             {
                 if (PlayerNowAction == NowAction.Action_PlaceVerticalBoard
                     || PlayerNowAction == NowAction.Action_PlaceHorizontalBoard)
-                    NowQuoridor.NumPlayer1Board -= 2;
+                    QuoridorRuleEngine.NumPlayer1Board -= 2;
                 NowPlayer = EnumNowPlayer.Player2;
             }
             else if (NowPlayer == EnumNowPlayer.Player2)
             {
                 if (PlayerNowAction == NowAction.Action_PlaceVerticalBoard
                     || PlayerNowAction == NowAction.Action_PlaceHorizontalBoard)
-                    NowQuoridor.NumPlayer2Board -= 2;
+                    QuoridorRuleEngine.NumPlayer2Board -= 2;
                 NowPlayer = EnumNowPlayer.Player1;
             }
 
             NowQuoridor.ThisChessBoard.DrawNowChessBoard(ref Gr, ChessWhitePB, ChessBlackPB);
             ChessBoardPB.Refresh();
 
-            string result = NowQuoridor.CheckResult();
+            string result = NowQuoridor.QuoridorRule.CheckResult(NowQuoridor.ThisChessBoard);
             if (result != "No success")
             {
                 MessageBox.Show(result);
@@ -444,9 +446,9 @@ namespace Quoridor_With_C
                 //MessageBox.Show("现在轮到玩家1操作！");
                 TestTB.Text = "当前行动玩家：白子";
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "白子剩余挡板：" + NowQuoridor.NumPlayer1Board.ToString();
+                TestTB.Text += "白子剩余挡板：" + QuoridorRuleEngine.NumPlayer1Board.ToString();
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "黑子剩余挡板：" + NowQuoridor.NumPlayer2Board.ToString();
+                TestTB.Text += "黑子剩余挡板：" + QuoridorRuleEngine.NumPlayer2Board.ToString();
 
                 PlayerNowAction = NowAction.Action_Move_Player1;
             }
@@ -455,20 +457,48 @@ namespace Quoridor_With_C
                 //MessageBox.Show("现在轮到玩家2操作！");
                 TestTB.Text = "当前行动玩家：黑子";
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "白子剩余挡板：" + NowQuoridor.NumPlayer1Board.ToString();
+                TestTB.Text += "白子剩余挡板：" + QuoridorRuleEngine.NumPlayer1Board.ToString();
                 TestTB.Text += System.Environment.NewLine;
-                TestTB.Text += "黑子剩余挡板：" + NowQuoridor.NumPlayer2Board.ToString();
+                TestTB.Text += "黑子剩余挡板：" + QuoridorRuleEngine.NumPlayer2Board.ToString();
 
                 PlayerNowAction = NowAction.Action_Move_Player2;
             }
             NowQuoridor.Player_Now = NowPlayer;
+            #endregion
 
             #region AI落子
             if (GameMode == GameModeStatus.SinglePlay)
             {
-                QuoridorAction AIAction = NowQuoridor.AIAction_Greedy(EnumNowPlayer.Player2);
-                Hint = NowQuoridor.ThisChessBoard.Action(AIAction.ActionPoint.X, AIAction.ActionPoint.Y, AIAction.PlayerAction);
-                PlayerNowAction = AIAction.PlayerAction;
+                QuoridorAI.AIRunTime.AstarNum = 0;
+                QuoridorAI.AIRunTime.Astar_s = 0;
+
+                GameTreeNode Root = new GameTreeNode();
+                Root.NodePlayer = EnumNowPlayer.Player1;
+                count_AIAction++;
+                Console.WriteLine("第" + count_AIAction.ToString() + "次落子:");
+                System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+                stopwatch.Start(); //  开始监视代码运行时间
+                /***************待测代码段****************/
+                GameTreeNode.CreateGameTree(Root, NowQuoridor.ThisChessBoard, 1, false);//skinCheckBox1.Checked);//可以改变最大深度来提高算法强度,一定要是奇数
+                /***************待测代码段****************/
+                stopwatch.Stop(); //  停止监视
+                TimeSpan timespan = stopwatch.Elapsed; //  获取当前实例测量得出的总时间
+                double milliseconds = timespan.TotalMilliseconds;  //  总毫秒数
+                double seconds = timespan.TotalSeconds;
+                Console.WriteLine("算法用时：" + seconds.ToString() + "s");
+                GameTreeNode.NodeNum = 0;
+                GameTreeNode.CalGameTreeNodeNum(Root);
+                Console.WriteLine("博弈树节点总数：" + GameTreeNode.NodeNum.ToString() + "个");
+                Console.WriteLine("Astar平均用时：" + QuoridorAI.AIRunTime.Astar_s.ToString() + "ms");
+                Console.WriteLine("Astar次数：" + QuoridorAI.AIRunTime.AstarNum.ToString() + "次");
+                Console.WriteLine("Astar总用时：" + (QuoridorAI.AIRunTime.Astar_s * QuoridorAI.AIRunTime.AstarNum).ToString() + "ms");
+                Console.WriteLine("*************");
+                
+                //NowQuoridor.AlphaBetaPruningInit(NowQuoridor.ThisChessBoard.ChessBoardAll, EnumNowPlayer.Player2);
+                //QuoridorAction AIAction = NowQuoridor.AlphaBetaPruning(NowQuoridor.ThisChessBoard, EnumNowPlayer.Player2, 4, -10000, 10000, ref buff);
+                //QuoridorAction AIAction = NowQuoridor.AIAction_Greedy(EnumNowPlayer.Player2);
+                Hint = NowQuoridor.QuoridorRule.Action(ref NowQuoridor.ThisChessBoard, Root.ActionLocation.X, Root.ActionLocation.Y, Root.NodeAction);
+                PlayerNowAction = Root.NodeAction;
                 if (Hint != "OK")
                 {
                     MessageBox.Show(Hint);
@@ -478,21 +508,21 @@ namespace Quoridor_With_C
                 {
                     if (PlayerNowAction == NowAction.Action_PlaceVerticalBoard
                         || PlayerNowAction == NowAction.Action_PlaceHorizontalBoard)
-                        NowQuoridor.NumPlayer1Board -= 2;
+                        QuoridorRuleEngine.NumPlayer1Board -= 2;
                     NowPlayer = EnumNowPlayer.Player2;
                 }
                 else if (NowPlayer == EnumNowPlayer.Player2)
                 {
                     if (PlayerNowAction == NowAction.Action_PlaceVerticalBoard
                         || PlayerNowAction == NowAction.Action_PlaceHorizontalBoard)
-                        NowQuoridor.NumPlayer2Board -= 2;
+                        QuoridorRuleEngine.NumPlayer2Board -= 2;
                     NowPlayer = EnumNowPlayer.Player1;
                 }
 
                 NowQuoridor.ThisChessBoard.DrawNowChessBoard(ref Gr, ChessWhitePB, ChessBlackPB);
                 ChessBoardPB.Refresh();
 
-                result = NowQuoridor.CheckResult();
+                result = NowQuoridor.QuoridorRule.CheckResult(NowQuoridor.ThisChessBoard);
                 if (result != "No success")
                 {
                     MessageBox.Show(result);
@@ -503,9 +533,9 @@ namespace Quoridor_With_C
                     //MessageBox.Show("现在轮到玩家1操作！");
                     TestTB.Text = "当前行动玩家：白子";
                     TestTB.Text += System.Environment.NewLine;
-                    TestTB.Text += "白子剩余挡板：" + NowQuoridor.NumPlayer1Board.ToString();
+                    TestTB.Text += "白子剩余挡板：" + QuoridorRuleEngine.NumPlayer1Board.ToString();
                     TestTB.Text += System.Environment.NewLine;
-                    TestTB.Text += "黑子剩余挡板：" + NowQuoridor.NumPlayer2Board.ToString();
+                    TestTB.Text += "黑子剩余挡板：" + QuoridorRuleEngine.NumPlayer2Board.ToString();
 
                     PlayerNowAction = NowAction.Action_Move_Player1;
                 }
@@ -514,9 +544,9 @@ namespace Quoridor_With_C
                     //MessageBox.Show("现在轮到玩家2操作！");
                     TestTB.Text = "当前行动玩家：黑子";
                     TestTB.Text += System.Environment.NewLine;
-                    TestTB.Text += "白子剩余挡板：" + NowQuoridor.NumPlayer1Board.ToString();
+                    TestTB.Text += "白子剩余挡板：" + QuoridorRuleEngine.NumPlayer1Board.ToString();
                     TestTB.Text += System.Environment.NewLine;
-                    TestTB.Text += "黑子剩余挡板：" + NowQuoridor.NumPlayer2Board.ToString();
+                    TestTB.Text += "黑子剩余挡板：" + QuoridorRuleEngine.NumPlayer2Board.ToString();
 
                     PlayerNowAction = NowAction.Action_Move_Player2;
                 }
@@ -631,37 +661,28 @@ namespace Quoridor_With_C
             }
 
         }
-
+        /// <summary>
+        /// 用于步步为营AI的一些算法测试
+        /// </summary>
         private void TestBTN_Click(object sender, EventArgs e)
         {
-            //int rowbuff = NowQuoridor.ThisChessBoard.Player1Location.X;
-            //int colbuff = NowQuoridor.ThisChessBoard.Player1Location.Y;
-            //int player1dis = NowQuoridor.AstarRestart(EnumNowPlayer.Player1, rowbuff, colbuff);
-            //Console.WriteLine("玩家1最短路径长度：");
-            //Console.WriteLine(player1dis.ToString());
+            //GameTreeNode Root = new GameTreeNode();
+            //Root.NodePlayer = EnumNowPlayer.Player1;
+            //GameTreeNode.CreateGameTree(Root, NowQuoridor.ThisChessBoard, 1, true);
 
-            //rowbuff = NowQuoridor.ThisChessBoard.Player2Location.X;
-            //colbuff = NowQuoridor.ThisChessBoard.Player2Location.Y;
-            //int player2dis = NowQuoridor.AstarRestart(EnumNowPlayer.Player2, rowbuff, colbuff);
-            //Console.WriteLine("玩家2最短路径长度：");
-            //Console.WriteLine(player2dis.ToString());
+            Form1.EnumNowPlayer PlayerSave = EnumNowPlayer.Player2;
+            NowQuoridor.Player_Now = PlayerSave;
 
-            //List<Point> Roadbuff = NowQuoridor.Player1MinRoad;
-            //Console.WriteLine("Player1最短路径：");
-   
-            //for (int i = Roadbuff.Count - 1; i >= 0; i--)
-            //{
-            //    Console.WriteLine(Roadbuff[i].X.ToString()+ ", " +Roadbuff[i].Y.ToString());
-            //}
-            //Roadbuff = NowQuoridor.Player2MinRoad;
-            //Console.WriteLine("Player2最短路径：");
-            //for (int i = Roadbuff.Count - 1; i >= 0; i--)
-            //{
-            //    Console.WriteLine(Roadbuff[i].X.ToString() + ", " + Roadbuff[i].Y.ToString());
-            //}
-            NowQuoridor.TestEvaluation();
+            List<QuoridorAction> QABuff = NowQuoridor.ActionList;
+
+            QABuff = NowQuoridor.CreateActionList(NowQuoridor.ThisChessBoard);
+
+            Console.WriteLine("Stop!");
         }
         bool IfShowFollow = false;
+        /// <summary>
+        /// 用于在Form窗体上实现挡板跟随效果
+        /// </summary>
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             if (IfShowFollow)
@@ -682,14 +703,18 @@ namespace Quoridor_With_C
 
         }
 
-        int delaycount = 0;
+        int delaycount = 0;//用于挡板跟随延迟计数
+        const int DelayTime_Follow = 3;//挡板跟随延迟总数,可以控制挡板跟随效果的延迟
+        /// <summary>
+        /// 用于挡板跟随
+        /// </summary>
         private void ChessBoardPB_MouseMove(object sender, MouseEventArgs e)
         {
             if (IfShowFollow)
             {
                 delaycount++;
 
-                if (delaycount >= 3)
+                if (delaycount >= DelayTime_Follow)
                 {
                     delaycount = 0;
                     int L_X = e.Location.X;
@@ -749,7 +774,10 @@ namespace Quoridor_With_C
             }
         }
         bool IsShowQueenFlag = true;
-        
+       /// <summary>
+       /// 主要用于测试八皇后寻优
+       /// </summary>
+ 
         private void Test2BTN_Click(object sender, EventArgs e)
         {
             ThisQueenSolve.ChessLocationList = QueenChessLocation;
@@ -763,7 +791,6 @@ namespace Quoridor_With_C
             if (IsShowQueenFlag)
             {
                 ShowQueenLocation(ThisQueenSolve.QueenLocationList, QueenList);
-                ///100000 0.99 1000 0 SA
                 Queen.QueenSolve.SelectedQueenResultNum = 92;
                 ///1000 0.96 64
                 //ThisQueenSolve.InitSA(1000, 0.96, 64, 0, SimulateAnneal.Annealing.SAMode.SA);
@@ -773,6 +800,7 @@ namespace Quoridor_With_C
                 List<int> MoveSequence = new List<int>();
                 double disall = 0;
 
+                #region 算法测试
                 System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
                 stopwatch.Start(); //  开始监视代码运行时间
                 //  需要测试的代码 
@@ -798,6 +826,8 @@ namespace Quoridor_With_C
                 Console.WriteLine("总路径长度为" + disall.ToString());
                 Console.WriteLine("用时(s) ：" + seconds.ToString() + "秒");
                 Console.WriteLine("用时(ms)：" + milliseconds.ToString() + "毫秒");
+
+                #endregion
             }
             else
             {

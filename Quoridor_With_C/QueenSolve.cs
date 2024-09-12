@@ -21,14 +21,14 @@ namespace Queen
     {
         public List<Point> ChessLocationList = new List<Point>();//棋子位置列表
         public List<Point> QueenLocationList = new List<Point>();//八皇后结果列表
-        public static int SelectedQueenResultNum = 92;
+        public static int SelectedQueenResultNum = 92;//只搜索SelectedQueenResultNum组八皇后的解
         public enum DistanceCalMethod
         {
             ManhattanDistance,
             EuclideanDistance,
             ManhattanDistance_Diagonal
         }
-        public DistanceCalMethod UsedCalMethod = DistanceCalMethod.ManhattanDistance;
+        public DistanceCalMethod UsedCalMethod = DistanceCalMethod.ManhattanDistance;//TSP问题使用的距离公式
         double DiagonalWalkTimeRate = Math.Sqrt(2);//斜走一个距离放大系数
         double StraightWalkTimeRate = 1;//直走一个距离放大系数
 
@@ -82,7 +82,7 @@ namespace Queen
         }
         public InitResultMethod UsedInitResultMethod = InitResultMethod.Dijkstra;
         /// <summary>
-        /// 创建初始解
+        /// 创建初始解(贪婪算法)
         /// </summary>
         /// <param name="ChessList">棋子位置列表</param>
         /// <param name="QueenList">皇后位置列表</param>
@@ -194,6 +194,12 @@ namespace Queen
             UsedInitResultMethod = InitMethod;
             SelectedQueenResultNum = SelectNum;
         }
+        /// <summary>
+        /// 在控制台上输出解序列（会显示棋子坐标，皇后坐标以及移动序列以及总长度）
+        /// </summary>
+        /// <param name="MoveSequence">移动序列</param>
+        /// <param name="ChessList">皇后位置列表</param>
+        /// <param name="QueenList">棋子位置列表</param>
         public void PrintMoveSequence(List<int> MoveSequence, List<Point> ChessList, List<Point> QueenList)
         {
             for (int i = 0; i < MoveSequence.Count; i++)
@@ -212,6 +218,10 @@ namespace Queen
                 Console.WriteLine();
             }
         }
+        /// <summary>
+        /// 打印解序列，主要用于真实的序列信息
+        /// </summary>
+        /// <param name="MoveSequence">移动序列</param>
         public void PrintResultSequence(List<int> MoveSequence)
         {
             Console.Write("棋子序列:");
@@ -227,8 +237,8 @@ namespace Queen
             }
             Console.WriteLine();
         }
-        public Annealing ThisSA;
-        public Annealing.SAMode ThisSAMode = Annealing.SAMode.SA; 
+        public Annealing ThisSA;//退火引擎
+        public Annealing.SAMode ThisSAMode = Annealing.SAMode.SA; //退火模式
         /// <summary>
         /// 初始化模拟退火（主要为了设定SA算法的初始参数）
         /// </summary>

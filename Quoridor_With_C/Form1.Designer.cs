@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.ChessBoardPB = new CCWin.SkinControl.SkinPictureBox();
+            Form1.ChessBoardPB = new CCWin.SkinControl.SkinPictureBox();
             this.PlaceVerticalBoardBTN = new CCWin.SkinControl.SkinButton();
             this.TestTB = new CCWin.SkinControl.SkinTextBox();
-            this.ChessWhitePB = new CCWin.SkinControl.SkinPictureBox();
-            this.ChessBlackPB = new CCWin.SkinControl.SkinPictureBox();
+            Form1.ChessWhitePB = new CCWin.SkinControl.SkinPictureBox();
+            Form1.ChessBlackPB = new CCWin.SkinControl.SkinPictureBox();
             this.PlaceHorizontalBoardBTN = new CCWin.SkinControl.SkinButton();
             this.TestBTN = new CCWin.SkinControl.SkinButton();
             this.RandomPlaceBTN = new CCWin.SkinControl.SkinButton();
@@ -58,9 +58,9 @@
             this.Queen7PB = new CCWin.SkinControl.SkinPictureBox();
             this.Queen8PB = new CCWin.SkinControl.SkinPictureBox();
             this.SearchPB = new CCWin.SkinControl.SkinProgressBar();
-            ((System.ComponentModel.ISupportInitialize)(this.ChessBoardPB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ChessWhitePB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ChessBlackPB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessBoardPB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessWhitePB)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessBlackPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HBoardPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VBoardPB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.QueenChess1PB)).BeginInit();
@@ -83,16 +83,16 @@
             // 
             // ChessBoardPB
             // 
-            this.ChessBoardPB.BackColor = System.Drawing.Color.Transparent;
-            this.ChessBoardPB.Image = global::Quoridor_With_C.Resource1.qipan2019;
-            this.ChessBoardPB.Location = new System.Drawing.Point(11, 33);
-            this.ChessBoardPB.Name = "ChessBoardPB";
-            this.ChessBoardPB.Size = new System.Drawing.Size(630, 630);
-            this.ChessBoardPB.TabIndex = 0;
-            this.ChessBoardPB.TabStop = false;
-            this.ChessBoardPB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseClick);
-            this.ChessBoardPB.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseDown);
-            this.ChessBoardPB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseMove);
+            Form1.ChessBoardPB.BackColor = System.Drawing.Color.Transparent;
+            Form1.ChessBoardPB.Image = global::Quoridor_With_C.Resource1.qipan2019;
+            Form1.ChessBoardPB.Location = new System.Drawing.Point(11, 33);
+            Form1.ChessBoardPB.Name = "ChessBoardPB";
+            Form1.ChessBoardPB.Size = new System.Drawing.Size(630, 630);
+            Form1.ChessBoardPB.TabIndex = 0;
+            Form1.ChessBoardPB.TabStop = false;
+            Form1.ChessBoardPB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseClick);
+            Form1.ChessBoardPB.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseDown);
+            Form1.ChessBoardPB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ChessBoardPB_MouseMove);
             // 
             // PlaceVerticalBoardBTN
             // 
@@ -157,24 +157,24 @@
             // 
             // ChessWhitePB
             // 
-            this.ChessWhitePB.BackColor = System.Drawing.Color.Transparent;
-            this.ChessWhitePB.Image = global::Quoridor_With_C.Resource1.ChessWhite;
-            this.ChessWhitePB.Location = new System.Drawing.Point(297, 66);
-            this.ChessWhitePB.Name = "ChessWhitePB";
-            this.ChessWhitePB.Size = new System.Drawing.Size(58, 58);
-            this.ChessWhitePB.TabIndex = 4;
-            this.ChessWhitePB.TabStop = false;
-            this.ChessWhitePB.Click += new System.EventHandler(this.ChessWhitePB_Click);
+            Form1.ChessWhitePB.BackColor = System.Drawing.Color.Transparent;
+            Form1.ChessWhitePB.Image = global::Quoridor_With_C.Resource1.ChessWhite;
+            Form1.ChessWhitePB.Location = new System.Drawing.Point(297, 66);
+            Form1.ChessWhitePB.Name = "ChessWhitePB";
+            Form1.ChessWhitePB.Size = new System.Drawing.Size(58, 58);
+            Form1.ChessWhitePB.TabIndex = 4;
+            Form1.ChessWhitePB.TabStop = false;
+            Form1.ChessWhitePB.Click += new System.EventHandler(this.ChessWhitePB_Click);
             // 
             // ChessBlackPB
             // 
-            this.ChessBlackPB.BackColor = System.Drawing.Color.Transparent;
-            this.ChessBlackPB.Image = global::Quoridor_With_C.Resource1.ChessBlack;
-            this.ChessBlackPB.Location = new System.Drawing.Point(297, 569);
-            this.ChessBlackPB.Name = "ChessBlackPB";
-            this.ChessBlackPB.Size = new System.Drawing.Size(58, 58);
-            this.ChessBlackPB.TabIndex = 5;
-            this.ChessBlackPB.TabStop = false;
+            Form1.ChessBlackPB.BackColor = System.Drawing.Color.Transparent;
+            Form1.ChessBlackPB.Image = global::Quoridor_With_C.Resource1.ChessBlack;
+            Form1.ChessBlackPB.Location = new System.Drawing.Point(297, 569);
+            Form1.ChessBlackPB.Name = "ChessBlackPB";
+            Form1.ChessBlackPB.Size = new System.Drawing.Size(58, 58);
+            Form1.ChessBlackPB.TabIndex = 5;
+            Form1.ChessBlackPB.TabStop = false;
             // 
             // PlaceHorizontalBoardBTN
             // 
@@ -493,11 +493,11 @@
             this.Controls.Add(this.RandomPlaceBTN);
             this.Controls.Add(this.TestBTN);
             this.Controls.Add(this.PlaceHorizontalBoardBTN);
-            this.Controls.Add(this.ChessBlackPB);
-            this.Controls.Add(this.ChessWhitePB);
+            this.Controls.Add(Form1.ChessBlackPB);
+            this.Controls.Add(Form1.ChessWhitePB);
             this.Controls.Add(this.TestTB);
             this.Controls.Add(this.PlaceVerticalBoardBTN);
-            this.Controls.Add(this.ChessBoardPB);
+            this.Controls.Add(Form1.ChessBoardPB);
             this.Name = "Form1";
             this.Radius = 35;
             this.RoundStyle = CCWin.SkinClass.RoundStyle.All;
@@ -507,9 +507,9 @@
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
-            ((System.ComponentModel.ISupportInitialize)(this.ChessBoardPB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ChessWhitePB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ChessBlackPB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessBoardPB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessWhitePB)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(Form1.ChessBlackPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HBoardPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.VBoardPB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.QueenChess1PB)).EndInit();
@@ -535,11 +535,11 @@
         #endregion
         private CCWin.SkinControl.SkinPictureBox HBoardPB;
         private CCWin.SkinControl.SkinPictureBox VBoardPB;
-        public CCWin.SkinControl.SkinPictureBox ChessBoardPB;
+        public static CCWin.SkinControl.SkinPictureBox ChessBoardPB;
         private CCWin.SkinControl.SkinButton PlaceVerticalBoardBTN;
         private CCWin.SkinControl.SkinTextBox TestTB;
-        private CCWin.SkinControl.SkinPictureBox ChessWhitePB;
-        private CCWin.SkinControl.SkinPictureBox ChessBlackPB;
+        public static CCWin.SkinControl.SkinPictureBox ChessWhitePB;
+        public static CCWin.SkinControl.SkinPictureBox ChessBlackPB;
         private CCWin.SkinControl.SkinButton PlaceHorizontalBoardBTN;
         private CCWin.SkinControl.SkinButton TestBTN;
         private CCWin.SkinControl.SkinButton RandomPlaceBTN;
